@@ -4,8 +4,8 @@
     <string name="bookmark_removed">Bookmark removed</string>
     <string name="menu_bookmarks">Bookmarks</string>
     <string name="menu_history">History</string>
-    <string name="menu_filter_on_site">Disable protection for site</string>
-    <string name="menu_filter_off_site">Enable protection for site</string>
+    <string name="menu_filter_on_site">Enable protection for site</string>
+    <string name="menu_filter_off_site">Disable protection for site</string>
     <string name="menu_settings">Settings</string>
     <string name="refresh">Refresh</string>
     <string name="stop">Stop</string>

@@ -41,7 +41,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_more" />
+            android:src="@drawable/ic_more" />
     </LinearLayout>
 
     <ProgressBar
@@ -71,7 +71,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_previous" />
+            android:src="@drawable/ic_back" />
 
         <ImageButton
             android:id="@+id/btnForward"
@@ -79,7 +79,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_next" />
+            android:src="@drawable/ic_forward" />
 
         <ImageButton
             android:id="@+id/btnRefresh"
@@ -95,6 +95,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_myplaces" />
+            android:src="@drawable/ic_home" />
     </LinearLayout>
 </LinearLayout>
