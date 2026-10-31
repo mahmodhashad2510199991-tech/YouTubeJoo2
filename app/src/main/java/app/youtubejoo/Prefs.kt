@@ -12,6 +12,9 @@ object Prefs {
     private fun sp(c: Context) = PreferenceManager.getDefaultSharedPreferences(c)
 
     fun filtering(c: Context) = sp(c).getBoolean("filtering_enabled", true)
+    fun adblock(c: Context) = sp(c).getBoolean("adblock_enabled", true)
+    fun desktop(c: Context) = sp(c).getBoolean("desktop_mode", false)
+    fun setDesktop(c: Context, v: Boolean) { sp(c).edit().putBoolean("desktop_mode", v).apply() }
     fun cookieMode(c: Context) = sp(c).getString("cookie_mode", "recommended") ?: "recommended"
     fun darkMode(c: Context) = sp(c).getString("dark_mode", "dark") ?: "dark"
     fun homepage(c: Context): String =

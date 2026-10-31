@@ -47,4 +47,13 @@
         <item>light</item>
         <item>system</item>
     </string-array>
+    <string name="menu_desktop_site">Desktop site</string>
+    <string name="menu_mobile_site">Mobile site</string>
+    <string name="pref_adblock">Ad blocker (uBlock Origin)</string>
+    <string name="pref_adblock_summary">Blocks ads using uBlock Origin. Restart the app after changing. Not guaranteed on YouTube.</string>
+    <string name="notif_channel">Background playback</string>
+    <string name="notif_playing">Playing in background</string>
+    <string name="notif_paused">Paused</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
 </resources>

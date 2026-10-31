@@ -50,4 +50,13 @@
         <item>فاتح</item>
         <item>حسب النظام</item>
     </string-array>
+    <string name="menu_desktop_site">نسخة سطح المكتب</string>
+    <string name="menu_mobile_site">نسخة الموبايل</string>
+    <string name="pref_adblock">مانع الإعلانات (uBlock Origin)</string>
+    <string name="pref_adblock_summary">يحجب الإعلانات باستخدام uBlock Origin. أعد تشغيل التطبيق بعد التغيير. غير مضمون على يوتيوب.</string>
+    <string name="notif_channel">التشغيل في الخلفية</string>
+    <string name="notif_playing">يعمل في الخلفية</string>
+    <string name="notif_paused">متوقف مؤقتًا</string>
+    <string name="play">تشغيل</string>
+    <string name="pause">إيقاف مؤقت</string>
 </resources>

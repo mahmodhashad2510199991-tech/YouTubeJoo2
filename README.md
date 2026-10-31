@@ -47,3 +47,9 @@ The APK is large (~100 MB+) because it bundles the Gecko engine. Only arm64-v8a 
 
 ## Licensing
 See `THIRD_PARTY_LICENSES.md`.
+
+## v1.1 additions
+- Ad blocker: uBlock Origin (official Firefox build) is downloaded by the GitHub Action into `assets/ublock/` and loaded as a built-in GeckoView extension. Not guaranteed to block every YouTube ad; YouTube changes often.
+- Background playback: foreground service + notification controls while media plays. If audio stops when you leave the app, use menu -> Desktop site.
+- Picture-in-picture: leaving the app while a video is fullscreen enters PiP.
+- uBlock Origin is GPLv3 (https://github.com/gorhill/uBlock). It is not committed to this repo; it is fetched at build time.

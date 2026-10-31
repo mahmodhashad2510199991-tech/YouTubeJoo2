@@ -27,6 +27,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    // keep "_locales" etc. inside assets (the default pattern drops folders starting with "_"; uBlock Origin needs them)
+    androidResources { ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~" }
     packaging { jniLibs { useLegacyPackaging = true } }
 }
 

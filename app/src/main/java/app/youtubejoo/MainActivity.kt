@@ -1,11 +1,17 @@
 package app.youtubejoo
 
+import android.Manifest
+import android.app.PictureInPictureParams
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ActivityInfo
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.util.Rational
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -14,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -23,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.WebRequestError
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +53,9 @@ class MainActivity : AppCompatActivity() {
         r.data?.getStringExtra("url")?.let { load(it) }
     }
 
+    private val notifPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -57,6 +68,9 @@ class MainActivity : AppCompatActivity() {
         setupUi()
         createSession(restore = true)
         registerNetworkCallback()
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -74,6 +88,15 @@ class MainActivity : AppCompatActivity() {
         intent.data?.toString()?.let { load(it) }
     }
 
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (fullScreen && Playback.playing && Build.VERSION.SDK_INT >= 26) {
+            try {
+                enterPictureInPictureMode(PictureInPictureParams.Builder().setAspectRatio(Rational(16, 9)).build())
+            } catch (e: Exception) { Log.w("YouTubeJoo", "PiP unavailable", e) }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         Gecko.apply(this, runtime)
@@ -81,7 +104,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         networkCallback?.let { getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(it) }
-        if (isFinishing) session?.close()
+        if (isFinishing) {
+            stopService(Intent(this, PlaybackService::class.java))
+            Playback.media = null; Playback.playing = false
+            session?.close()
+        }
         super.onDestroy()
     }
 
@@ -123,17 +150,30 @@ class MainActivity : AppCompatActivity() {
             menu.add(0, 1, 0, R.string.menu_bookmarks)
             menu.add(0, 2, 1, R.string.menu_history)
             menu.add(0, 3, 2, if (siteOff) R.string.menu_filter_on_site else R.string.menu_filter_off_site)
-            menu.add(0, 4, 3, R.string.menu_settings)
+            menu.add(0, 4, 3, if (Prefs.desktop(this@MainActivity)) R.string.menu_mobile_site else R.string.menu_desktop_site)
+            menu.add(0, 5, 4, R.string.menu_settings)
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     1 -> library.launch(Intent(this@MainActivity, LibraryActivity::class.java).putExtra("mode", "bookmarks"))
                     2 -> library.launch(Intent(this@MainActivity, LibraryActivity::class.java).putExtra("mode", "history"))
                     3 -> toggleSiteFiltering()
-                    4 -> startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                    4 -> toggleDesktop()
+                    5 -> startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 }
                 true
             }
         }.show()
+    }
+
+    private fun applyDesktopMode(s: GeckoSession) {
+        val d = Prefs.desktop(this)
+        s.settings.userAgentMode = if (d) GeckoSessionSettings.USER_AGENT_MODE_DESKTOP else GeckoSessionSettings.USER_AGENT_MODE_MOBILE
+        s.settings.viewportMode = if (d) GeckoSessionSettings.VIEWPORT_MODE_DESKTOP else GeckoSessionSettings.VIEWPORT_MODE_MOBILE
+    }
+
+    private fun toggleDesktop() {
+        Prefs.setDesktop(this, !Prefs.desktop(this))
+        session?.let { applyDesktopMode(it); it.reload() }
     }
 
     private fun toggleSiteFiltering() {
@@ -181,6 +221,8 @@ class MainActivity : AppCompatActivity() {
         s.contentDelegate = contentDelegate
         s.navigationDelegate = navigationDelegate
         s.progressDelegate = progressDelegate
+        s.mediaSessionDelegate = mediaDelegate
+        applyDesktopMode(s)
         s.open(runtime)
         b.geckoView.setSession(s)
         session = s
@@ -210,6 +252,42 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCrash(session: GeckoSession) = recover()
         override fun onKill(session: GeckoSession) = recover()
+    }
+
+    private fun startPlaybackService() {
+        try {
+            ContextCompat.startForegroundService(
+                this, Intent(this, PlaybackService::class.java).setAction(PlaybackService.ACTION_REFRESH)
+            )
+        } catch (e: Exception) { Log.w("YouTubeJoo", "Cannot start playback service", e) }
+    }
+
+    private val mediaDelegate = object : GeckoSession.MediaSession.Delegate {
+        override fun onActivated(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+            Playback.media = mediaSession
+        }
+
+        override fun onDeactivated(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+            Playback.media = null; Playback.playing = false
+            stopService(Intent(this@MainActivity, PlaybackService::class.java))
+        }
+
+        override fun onMetadata(session: GeckoSession, mediaSession: GeckoSession.MediaSession, meta: GeckoSession.MediaSession.Metadata) {
+            Playback.title = meta.title ?: ""
+        }
+
+        override fun onPlay(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+            Playback.media = mediaSession; Playback.playing = true; startPlaybackService()
+        }
+
+        override fun onPause(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+            Playback.playing = false; startPlaybackService()
+        }
+
+        override fun onStop(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+            Playback.playing = false
+            stopService(Intent(this@MainActivity, PlaybackService::class.java))
+        }
     }
 
     private fun recover() {

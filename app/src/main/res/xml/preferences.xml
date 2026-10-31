@@ -7,6 +7,11 @@
             app:key="filtering_enabled"
             app:title="Tracking Protection"
             app:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:key="adblock_enabled"
+            app:title="@string/pref_adblock"
+            app:summary="@string/pref_adblock_summary"
+            app:defaultValue="true" />
         <EditTextPreference
             app:key="whitelist"
             app:title="Site Whitelist"

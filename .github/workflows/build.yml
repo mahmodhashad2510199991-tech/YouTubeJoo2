@@ -14,6 +14,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.11.1
+      - name: Fetch uBlock Origin (Firefox build) into assets
+        run: |
+          mkdir -p app/src/main/assets/ublock
+          curl -fL -o ubo.xpi https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi
+          unzip -q -o ubo.xpi -d app/src/main/assets/ublock
+          test -f app/src/main/assets/ublock/manifest.json
+          grep -o '"id"[^,]*' app/src/main/assets/ublock/manifest.json | head -1
       - name: Assemble debug APK
         run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
