@@ -30,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.MediaSession
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.WebRequestError
 
@@ -262,29 +263,29 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) { Log.w("YouTubeJoo", "Cannot start playback service", e) }
     }
 
-    private val mediaDelegate = object : GeckoSession.MediaSession.Delegate {
-        override fun onActivated(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+    private val mediaDelegate = object : MediaSession.Delegate {
+        override fun onActivated(session: GeckoSession, mediaSession: MediaSession) {
             Playback.media = mediaSession
         }
 
-        override fun onDeactivated(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+        override fun onDeactivated(session: GeckoSession, mediaSession: MediaSession) {
             Playback.media = null; Playback.playing = false
             stopService(Intent(this@MainActivity, PlaybackService::class.java))
         }
 
-        override fun onMetadata(session: GeckoSession, mediaSession: GeckoSession.MediaSession, meta: GeckoSession.MediaSession.Metadata) {
+        override fun onMetadata(session: GeckoSession, mediaSession: MediaSession, meta: MediaSession.Metadata) {
             Playback.title = meta.title ?: ""
         }
 
-        override fun onPlay(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+        override fun onPlay(session: GeckoSession, mediaSession: MediaSession) {
             Playback.media = mediaSession; Playback.playing = true; startPlaybackService()
         }
 
-        override fun onPause(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+        override fun onPause(session: GeckoSession, mediaSession: MediaSession) {
             Playback.playing = false; startPlaybackService()
         }
 
-        override fun onStop(session: GeckoSession, mediaSession: GeckoSession.MediaSession) {
+        override fun onStop(session: GeckoSession, mediaSession: MediaSession) {
             Playback.playing = false
             stopService(Intent(this@MainActivity, PlaybackService::class.java))
         }

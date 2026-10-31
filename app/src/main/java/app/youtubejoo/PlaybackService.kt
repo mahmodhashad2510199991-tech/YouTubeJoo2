@@ -11,10 +11,11 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.MediaSession
 
 /** Shared playback state, written by MainActivity's MediaSession delegate. */
 object Playback {
-    @Volatile var media: GeckoSession.MediaSession? = null
+    @Volatile var media: MediaSession? = null
     @Volatile var playing = false
     @Volatile var title: String = ""
 }
