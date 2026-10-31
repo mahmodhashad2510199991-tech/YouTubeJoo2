@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="url_hint">ابحث في يوتيوب أو اكتب عنوانًا</string>
+    <string name="back">رجوع</string>
+    <string name="forward">للأمام</string>
+    <string name="home">الرئيسية</string>
+    <string name="refresh">تحديث</string>
+    <string name="stop">إيقاف</string>
+    <string name="bookmark">إضافة إلى المفضلة</string>
+    <string name="more">المزيد</string>
+    <string name="menu_bookmarks">المفضلة</string>
+    <string name="menu_history">السجل</string>
+    <string name="menu_settings">الإعدادات</string>
+    <string name="menu_filter_off_site">إيقاف التصفية لهذا الموقع</string>
+    <string name="menu_filter_on_site">تشغيل التصفية لهذا الموقع</string>
+    <string name="bookmarks_title">المفضلة</string>
+    <string name="history_title">السجل</string>
+    <string name="empty">لا يوجد شيء هنا بعد</string>
+    <string name="delete_q">حذف هذا العنصر؟</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="bookmark_added">تمت الإضافة إلى المفضلة</string>
+    <string name="bookmark_removed">تمت الإزالة من المفضلة</string>
+    <string name="offline">لا يوجد اتصال بالإنترنت</string>
+    <string name="crashed">تعطلت الصفحة وتمت إعادة تشغيلها</string>
+    <string name="error_title">تعذر تحميل الصفحة</string>
+    <string name="error_body">تحقق من اتصالك بالإنترنت ثم اضغط تحديث للمحاولة مرة أخرى.</string>
+    <string name="pref_filtering">تصفية المحتوى</string>
+    <string name="pref_filtering_summary">حظر المتتبعات والتصفح الآمن (مدمج في Gecko). لا يضمن حظر إعلانات يوتيوب.</string>
+    <string name="pref_whitelist">القائمة البيضاء للتصفية</string>
+    <string name="pref_whitelist_summary">نطاق واحد في كل سطر (مثال: example.com). تُعطَّل التصفية لهذه المواقع.</string>
+    <string name="pref_clear_history">مسح سجل التصفح</string>
+    <string name="pref_clear_cache">مسح ذاكرة التخزين المؤقت</string>
+    <string name="pref_clear_cookies">مسح الكوكيز وبيانات المواقع</string>
+    <string name="pref_clear_cookies_summary">سيتم تسجيل خروجك من المواقع</string>
+    <string name="pref_cookies">إعدادات الكوكيز</string>
+    <string name="pref_homepage">الصفحة الرئيسية</string>
+    <string name="pref_dark">سمة محتوى المواقع</string>
+    <string name="pref_about">حول YouTube joo</string>
+    <string name="pref_version">الإصدار</string>
+    <string name="confirm_cookies">حذف كل الكوكيز وبيانات المواقع؟ سيتم تسجيل خروجك.</string>
+    <string name="about_text">YouTube joo متصفح مستقل ليوتيوب مبني على Mozilla GeckoView. لا يجمع أي بيانات شخصية ولا يحتوي على أدوات تحليل. تعتمد التصفية على الحماية المدمجة في Gecko ولا تضمن حظر كل الإعلانات.</string>
+    <string-array name="cookie_entries">
+        <item>موصى به (حظر المتتبعات)</item>
+        <item>قبول الكل</item>
+        <item>حظر كوكيز الطرف الثالث</item>
+        <item>حظر الكل (قد يمنع تسجيل الدخول)</item>
+    </string-array>
+    <string-array name="dark_entries">
+        <item>داكن</item>
+        <item>فاتح</item>
+        <item>حسب النظام</item>
+    </string-array>
+</resources>

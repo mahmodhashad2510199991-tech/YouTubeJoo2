@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreferenceCompat app:key="filtering_enabled" app:defaultValue="true"
+        app:title="@string/pref_filtering" app:summary="@string/pref_filtering_summary" />
+    <EditTextPreference app:key="whitelist" app:dependency="filtering_enabled"
+        app:title="@string/pref_whitelist" app:summary="@string/pref_whitelist_summary" />
+    <ListPreference app:key="cookie_mode" app:defaultValue="recommended"
+        app:title="@string/pref_cookies" app:entries="@array/cookie_entries"
+        app:entryValues="@array/cookie_values" app:useSimpleSummaryProvider="true" />
+    <EditTextPreference app:key="homepage" app:defaultValue="https://m.youtube.com"
+        app:title="@string/pref_homepage" app:useSimpleSummaryProvider="true" />
+    <ListPreference app:key="dark_mode" app:defaultValue="dark"
+        app:title="@string/pref_dark" app:entries="@array/dark_entries"
+        app:entryValues="@array/dark_values" app:useSimpleSummaryProvider="true" />
+    <Preference app:key="clear_history" app:title="@string/pref_clear_history" />
+    <Preference app:key="clear_cache" app:title="@string/pref_clear_cache" />
+    <Preference app:key="clear_cookies" app:title="@string/pref_clear_cookies" app:summary="@string/pref_clear_cookies_summary" />
+    <Preference app:key="about" app:title="@string/pref_about" />
+    <Preference app:key="version" app:title="@string/pref_version" app:selectable="false" />
+</PreferenceScreen>
