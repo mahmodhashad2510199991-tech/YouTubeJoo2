@@ -1,46 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/bg" android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0F0F0F">
 
-    <LinearLayout android:id="@+id/topBar"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:gravity="center_vertical" android:orientation="horizontal"
-        android:paddingHorizontal="8dp" android:paddingVertical="6dp">
-        <EditText android:id="@+id/urlInput"
-            android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1"
-            android:background="@drawable/bg_url" android:hint="@string/url_hint"
-            android:imeOptions="actionGo" android:inputType="textUri"
-            android:maxLines="1" android:paddingHorizontal="18dp"
-            android:selectAllOnFocus="true" android:textColor="@color/white"
-            android:textColorHint="#888888" android:textSize="15sp"
-            android:importantForAutofill="no" tools:ignore="LabelFor" />
-        <ImageButton android:id="@+id/btnBookmark"
-            android:layout_width="48dp" android:layout_height="48dp"
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="#212121"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp">
+
+        <EditText
+            android:id="@+id/urlInput"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_weight="1"
+            android:background="#333333"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#AAAAAA"
+            android:paddingHorizontal="10dp"
+            android:singleLine="true"
+            android:imeOptions="actionGo"
+            android:inputType="textUri"
+            android:hint="Search or enter URL"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/btnBookmark"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/bookmark" android:src="@drawable/ic_star_border" />
+            android:src="@drawable/ic_star_border" />
+
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_more" />
     </LinearLayout>
 
-    <ProgressBar android:id="@+id/progress" style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent" android:layout_height="3dp"
-        android:max="100" android:progressTint="@color/accent" android:visibility="gone" />
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:visibility="gone" />
 
-    <org.mozilla.geckoview.GeckoView android:id="@+id/geckoView"
-        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+    <org.mozilla.geckoview.GeckoView
+        android:id="@+id/geckoView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <LinearLayout android:id="@+id/bottomBar"
-        android:layout_width="match_parent" android:layout_height="52dp"
-        android:background="@color/surface" android:orientation="horizontal">
-        <ImageButton android:id="@+id/btnBack" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/back" android:src="@drawable/ic_back" />
-        <ImageButton android:id="@+id/btnForward" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/forward" android:src="@drawable/ic_forward" />
-        <ImageButton android:id="@+id/btnHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/home" android:src="@drawable/ic_home" />
-        <ImageButton android:id="@+id/btnRefresh" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/refresh" android:src="@drawable/ic_refresh" />
-        <ImageButton android:id="@+id/btnMenu" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/more" android:src="@drawable/ic_more" />
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#212121"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_previous" />
+
+        <ImageButton
+            android:id="@+id/btnForward"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_next" />
+
+        <ImageButton
+            android:id="@+id/btnRefresh"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_refresh" />
+
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_myplaces" />
     </LinearLayout>
 </LinearLayout>
