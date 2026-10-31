@@ -274,11 +274,7 @@ class MainActivity : AppCompatActivity() {
     private fun applySiteException(session: GeckoSession, url: String?) {
         if (!Prefs.filtering(this) || url == null || url.startsWith("data:")) return
         val should = Prefs.isWhitelisted(this, url)
-        val ctl = runtime.contentBlockingController
-        ctl.checkException(session).accept { has ->
-            if (should && has != true) ctl.addException(session)
-            else if (!should && has == true) ctl.removeException(session)
-        }
+        session.settings.useTrackingProtection = !should
     }
 
     private fun setFullScreen(on: Boolean) {
