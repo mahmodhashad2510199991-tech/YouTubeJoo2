@@ -7,7 +7,7 @@ val geckoviewVersion: String = providers.gradleProperty("geckoviewVersion").getO
 
 android {
     namespace = "app.youtubejoo"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "app.youtubejoo"
         minSdk = 26
