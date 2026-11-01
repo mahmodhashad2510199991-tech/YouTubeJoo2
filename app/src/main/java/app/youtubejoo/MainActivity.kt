@@ -1,6 +1,9 @@
 package app.youtubejoo
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -31,10 +35,14 @@ import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.MediaSession
+import org.mozilla.geckoview.WebNotification
+import org.mozilla.geckoview.WebNotificationDelegate
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.WebRequestError
 
 class MainActivity : AppCompatActivity() {
+    companion object { const val ACTION_WEB_NOTIF = "app.youtubejoo.WEB_NOTIF" }
+
     private lateinit var b: ActivityMainBinding
     private lateinit var store: Store
     private lateinit var runtime: GeckoRuntime
@@ -64,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(b.root)
         store = Store(this)
         runtime = Gecko.runtime(this)
+        runtime.webNotificationDelegate = webNotificationDelegate
 
         pendingUrl = intent?.data?.toString()
         setupUi()
@@ -86,7 +95,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        if (intent.action == ACTION_WEB_NOTIF) {
+            webNotifs.remove(intent.getIntExtra("nid", -1))?.click()
+            return
+        }
         intent.data?.toString()?.let { load(it) }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // keep the page active so audio continues in the background
+        session?.setActive(true)
     }
 
     override fun onUserLeaveHint() {
@@ -223,6 +242,7 @@ class MainActivity : AppCompatActivity() {
         s.navigationDelegate = navigationDelegate
         s.progressDelegate = progressDelegate
         s.mediaSessionDelegate = mediaDelegate
+        s.permissionDelegate = permissionDelegate
         applyDesktopMode(s)
         s.open(runtime)
         b.geckoView.setSession(s)
@@ -253,6 +273,51 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCrash(session: GeckoSession) = recover()
         override fun onKill(session: GeckoSession) = recover()
+    }
+
+    // ---- website notifications (allowed only for YouTube / Google sites)
+    private val webNotifs = mutableMapOf<Int, WebNotification>()
+
+    private val permissionDelegate = object : GeckoSession.PermissionDelegate {
+        override fun onContentPermissionRequest(
+            session: GeckoSession, perm: GeckoSession.PermissionDelegate.ContentPermission
+        ): GeckoResult<Int>? {
+            if (perm.permission != GeckoSession.PermissionDelegate.PERMISSION_DESKTOP_NOTIFICATION) return null
+            val host = Uri.parse(perm.uri).host ?: ""
+            val ok = host == "youtube.com" || host.endsWith(".youtube.com") || host.endsWith(".google.com")
+            return GeckoResult.fromValue(
+                if (ok) GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
+                else GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY
+            )
+        }
+    }
+
+    private val webNotificationDelegate = object : WebNotificationDelegate {
+        override fun onShowNotification(notification: WebNotification) {
+            val id = (System.currentTimeMillis() % 1_000_000_000L).toInt()
+            webNotifs[id] = notification
+            val nm = getSystemService(NotificationManager::class.java)
+            nm.createNotificationChannel(
+                NotificationChannel("web", getString(R.string.notif_web_channel), NotificationManager.IMPORTANCE_DEFAULT)
+            )
+            val pi = PendingIntent.getActivity(
+                this@MainActivity, id,
+                Intent(this@MainActivity, MainActivity::class.java)
+                    .setAction(ACTION_WEB_NOTIF).putExtra("nid", id)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            nm.notify(
+                id,
+                NotificationCompat.Builder(this@MainActivity, "web")
+                    .setSmallIcon(R.drawable.ic_notif)
+                    .setContentTitle(notification.title ?: getString(R.string.app_name))
+                    .setContentText(notification.text ?: "")
+                    .setContentIntent(pi)
+                    .setAutoCancel(true)
+                    .build()
+            )
+        }
     }
 
     private fun startPlaybackService() {

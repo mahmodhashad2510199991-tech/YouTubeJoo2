@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube joo background play",
+  "version": "1.0",
+  "description": "Keeps YouTube playing when the app is in the background.",
+  "browser_specific_settings": { "gecko": { "id": "bgplay@youtubejoo.app" } },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["bgplay.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}

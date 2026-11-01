@@ -27,6 +27,7 @@ object Gecko {
     /** Re-apply user settings (called on start and whenever the app is resumed). */
     fun apply(ctx: Context, runtime: GeckoRuntime) {
         applyAdblock(ctx, runtime)
+        runtime.settings.setAutoplayDefault(GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED)
         val on = Prefs.filtering(ctx)
         val cb = runtime.settings.contentBlocking
         cb.setAntiTracking(if (on) ContentBlocking.AntiTracking.DEFAULT else ContentBlocking.AntiTracking.NONE)
@@ -50,6 +51,13 @@ object Gecko {
 
     /** uBlock Origin, bundled as a built-in extension (unpacked into assets/ublock/ at build time). */
     private fun installAdBlock(ctx: Context, runtime: GeckoRuntime) {
+        // YouTube background-play helper (our own tiny built-in extension)
+        runtime.webExtensionController
+            .ensureBuiltIn("resource://android/assets/bgplay/", "bgplay@youtubejoo.app")
+            .accept(
+                { Log.i("YouTubeJoo", "background-play helper loaded") },
+                { e -> Log.e("YouTubeJoo", "background-play helper failed", e) }
+            )
         runtime.webExtensionController
             .ensureBuiltIn("resource://android/assets/ublock/", UBO_ID)
             .accept(

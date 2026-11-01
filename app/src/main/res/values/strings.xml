@@ -56,4 +56,5 @@
     <string name="notif_paused">Paused</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
+    <string name="notif_web_channel">Website notifications</string>
 </resources>

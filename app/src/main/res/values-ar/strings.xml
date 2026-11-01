@@ -59,4 +59,5 @@
     <string name="notif_paused">متوقف مؤقتًا</string>
     <string name="play">تشغيل</string>
     <string name="pause">إيقاف مؤقت</string>
+    <string name="notif_web_channel">إشعارات المواقع</string>
 </resources>

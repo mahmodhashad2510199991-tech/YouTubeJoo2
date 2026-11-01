@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.MediaSession
@@ -30,7 +31,28 @@ class PlaybackService : Service() {
         private const val NOTIF_ID = 1
     }
 
+    private var wakeLock: PowerManager.WakeLock? = null
+
     override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onDestroy() {
+        releaseLock()
+        super.onDestroy()
+    }
+
+    private fun updateLock() {
+        if (Playback.playing) {
+            if (wakeLock == null) {
+                wakeLock = getSystemService(PowerManager::class.java)
+                    .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "YouTubeJoo:playback")
+            }
+            wakeLock?.let { if (!it.isHeld) it.acquire(6 * 60 * 60 * 1000L) }
+        } else releaseLock()
+    }
+
+    private fun releaseLock() {
+        wakeLock?.let { if (it.isHeld) it.release() }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -42,6 +64,7 @@ class PlaybackService : Service() {
                 return START_NOT_STICKY
             }
         }
+        updateLock()
         val n = buildNotification()
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIF_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
